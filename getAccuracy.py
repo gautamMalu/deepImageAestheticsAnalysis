@@ -56,6 +56,7 @@ meanImg = './aadb_mean.npy'
 
 groundTruth = pd.read_csv(prefix+'.csv')
 imgList = groundTruth.ImageFile.tolist()
+print groundTruth.columns
 predAtt = pd.DataFrame(index=groundTruth.index,columns=groundTruth.columns)
 for index, row in groundTruth.iterrows():
     imgPath = os.path.join(imgSrc,row['ImageFile'])
@@ -64,7 +65,7 @@ for index, row in groundTruth.iterrows():
     net.blobs['imgLow'].data[...] = img
     net.forward()
     predDict = {}
-    predDict['BalancingElement'] = net.blobs['fc9_BalancingElement'].data[0][0]
+    predDict['BalacingElements'] = net.blobs['fc9_BalancingElement'].data[0][0]
     predDict['ColorHarmony'] = net.blobs['fc9_ColorHarmony'].data[0][0]
     predDict['Content'] = net.blobs['fc9_Content'].data[0][0]
     predDict['DoF'] = net.blobs['fc9_DoF'].data[0][0]
@@ -77,7 +78,6 @@ for index, row in groundTruth.iterrows():
     predDict['VividColor'] = net.blobs['fc9_VividColor'].data[0][0]
     predDict['score'] = net.blobs['fc11_score'].data[0][0]
     predDict['ImageFile'] = row['ImageFile']
-#    print predDict
     predAtt.loc[index] = pd.Series(predDict)
 
 predAtt.to_csv(prefix+'predict.csv',index=False)
